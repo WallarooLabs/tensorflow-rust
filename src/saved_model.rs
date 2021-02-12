@@ -125,6 +125,16 @@ impl TensorInfo {
         &self.name
     }
 
+    /// Returns the shape of the tensor.
+    pub fn shape(&self) -> &Shape {
+        &self.shape
+    }
+
+    /// Returns the data type of the tensor.
+    pub fn data_type(&self) -> &DataType {
+        &self.dtype
+    }
+
     // We don't use Into, because we don't want this to be public API.
     fn into_proto(self) -> protos::meta_graph::TensorInfo {
         let mut info = protos::meta_graph::TensorInfo::new();
