@@ -25,7 +25,7 @@ half = "1.6.0"
 # This is used internally but not intended to be exposed through the API.
 protobuf = "=2.17.0"
 # Enables conversions between ndarray::Array objects and tensorflow::Tensor
-ndarray = { version = "0.13.1", optional = true }
+ndarray = { version = "0.14.0", optional = true }
 
 
 [dev-dependencies]
