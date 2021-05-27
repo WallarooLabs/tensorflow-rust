@@ -241,7 +241,7 @@ unsafe impl Sync for Session {}
 /// An opaque token for retrieving an output from a computation.
 #[derive(Copy, Clone, Debug)]
 pub struct FetchToken {
-    index: usize,
+    pub index: usize,
 }
 
 /// Deprecated alias for FetchToken.
