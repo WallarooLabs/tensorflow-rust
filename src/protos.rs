@@ -13,6 +13,7 @@ pub mod node_def;
 pub mod op_def;
 pub mod resource_handle;
 pub mod rewriter_config;
+pub mod rpc_options;
 pub mod saved_model;
 pub mod saved_object_graph;
 pub mod saver;
