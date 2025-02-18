@@ -222,20 +222,32 @@ fn install_prebuilt() {
 
     // Download the tarball.
     if !file_name.exists() {
-        let f = File::create(&file_name).unwrap();
-        let mut writer = BufWriter::new(f);
-        let mut easy = Easy::new();
-        easy.url(&binary_url).unwrap();
-        easy.write_function(move |data| Ok(writer.write(data).unwrap()))
-            .unwrap();
-        easy.perform().unwrap();
+        if let Ok(output) = curl_cli(&binary_url, &file_name) {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            if output.status.success() {
+                if !stdout.is_empty() {
+                    eprintln!("STDOUT(curl): {stdout}");
+                }
+            } else {
+                eprintln!("STDERR(curl): {stderr}");
+            }
+        } else {
+            let f = File::create(&file_name).unwrap();
+            let mut writer = BufWriter::new(f);
+            let mut easy = Easy::new();
+            easy.url(&binary_url).unwrap();
+            easy.write_function(move |data| Ok(writer.write(data).unwrap()))
+                .unwrap();
+            easy.perform().unwrap();
 
-        let response_code = easy.response_code().unwrap();
-        if response_code != 200 {
-            panic!(
-                "Unexpected response code {} for {}",
-                response_code, binary_url
-            );
+            let response_code = easy.response_code().unwrap();
+            if response_code != 200 {
+                panic!(
+                    "Unexpected response code {} for {}",
+                    response_code, binary_url
+                );
+            }
         }
     }
 
@@ -474,4 +486,13 @@ fn check_bazel() -> Result<(), Box<dyn Error>> {
         return Err("Did not find version number in `bazel version` output.".into());
     }
     Ok(())
+}
+
+fn curl_cli(url: &str, output: &Path) -> io::Result<std::process::Output> {
+    Command::new("curl")
+        .arg("--silent")
+        .arg("--output")
+        .arg(output)
+        .arg(url)
+        .output()
 }
